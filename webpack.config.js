@@ -1,62 +1,101 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MinCssExtractPlugin = require('mini-css-extract-plugin');
+const {re} = require("@babel/core/lib/vendor/import-meta-resolve");
 
-module.exports = {
-    mode: "development",
-    entry: './src/index.js',
+module.exports = (env = {}) => {
 
-    module: {
-        rules: [
+    const {mode = 'development'} = env;
 
-            // js load
-            {
-                test: /\.js/,
-                exclude: /node_modules/,
-                loader: 'babel-loader'
-            },
+    const isProd = mode === 'production';
+    const isDev = mode === 'development';
 
-            // image load
-            {
-                test: /\.(png|jpg|jpeg|gif|ico)$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        outputPath: 'images',
-                        name: '[name]-[sha1:hash:7].[ext]'
-                    }
-                }]
-            },
-
-            // font load
-            {
-                test: /\.(ttf|otf|eot|woff|woff2)$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        outputPath: 'fonts',
-                        name: '[name].[ext]'
-                    }
-                }]
-            },
-
-            // css load
-            {
-                test: /\.(css)$/,
-                use: ["style-loader", "css-loader"]
-            },
-
-            // scss/sass load
-            {
-                test: /\.(c[ca]ss)$/,
-                use: ["style-loader", "css-loader", "sass-loader"]
-            },
+    const getStyleLoaders = () => {
+        return [
+            isProd ? MinCssExtractPlugin.loader : 'style-loader',
+            'css-loader'
         ]
-    },
+    };
 
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: 'public/index.html',
-            title: "Assessment",
-            buildTime: new Date().toString()
-        })
-    ]
+    const getPlugins = () => {
+        const plugins = [
+            new HtmlWebpackPlugin({
+                template: 'public/index.html',
+                title: "Assessment",
+                buildTime: new Date().toString()
+            })
+        ]
+        if (isProd) {
+            plugins.push(
+                new MinCssExtractPlugin({
+                    filename: 'main-[hash:8].css'
+                })
+            )
+        }
+
+        return plugins;
+    };
+
+    return {
+        mode: isProd ? 'production' : isDev && 'development',
+        entry: './src/index.js',
+        output: {
+            filename: isProd ? 'main-[hash:8].js' : undefined
+        },
+
+        module: {
+            rules: [
+
+                // js load
+                {
+                    test: /\.js/,
+                    exclude: /node_modules/,
+                    loader: 'babel-loader'
+                },
+
+                // image load
+                {
+                    test: /\.(png|jpg|jpeg|gif|ico)$/,
+                    use: [{
+                        loader: "file-loader",
+                        options: {
+                            outputPath: 'images',
+                            name: '[name]-[sha1:hash:7].[ext]'
+                        }
+                    }]
+                },
+
+                // font load
+                {
+                    test: /\.(ttf|otf|eot|woff|woff2)$/,
+                    use: [{
+                        loader: "file-loader",
+                        options: {
+                            outputPath: 'fonts',
+                            name: '[name].[ext]'
+                        }
+                    }]
+                },
+
+                // css load
+                {
+                    test: /\.(css)$/,
+                    use: getStyleLoaders()
+                },
+
+                // scss/sass load
+                {
+                    test: /\.(c[ca]ss)$/,
+                    use: [...getStyleLoaders(), "sass-loader"]
+                },
+            ]
+        },
+
+        plugins: [
+            ...getPlugins()
+        ],
+
+        devServer: {
+            open: true
+        }
+    }
 }
