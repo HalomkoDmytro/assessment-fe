@@ -1,4 +1,4 @@
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: "development",
@@ -7,15 +7,13 @@ module.exports = {
     module: {
         rules: [
 
+            // js load
             {
                 test: /\.js/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'babel-loader'
-                    }
-                ]
+                loader: 'babel-loader'
             },
+
             // image load
             {
                 test: /\.(png|jpg|jpeg|gif|ico)$/,
@@ -27,6 +25,7 @@ module.exports = {
                     }
                 }]
             },
+
             // font load
             {
                 test: /\.(ttf|otf|eot|woff|woff2)$/,
@@ -38,11 +37,26 @@ module.exports = {
                     }
                 }]
             },
+
             // css load
             {
                 test: /\.(css)$/,
-                use: "css-loader"
+                use: ["style-loader", "css-loader"]
+            },
+
+            // scss/sass load
+            {
+                test: /\.(c[ca]ss)$/,
+                use: ["style-loader", "css-loader", "sass-loader"]
             },
         ]
-    }
+    },
+
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'public/index.html',
+            title: "Assessment",
+            buildTime: new Date().toString()
+        })
+    ]
 }

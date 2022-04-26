@@ -3,7 +3,8 @@
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-transform-template-literals",
     "@babel/plugin-transform-classes",
-    "@babel/plugin-transform-block-scoping"
+    "@babel/plugin-transform-block-scoping",
+    "@babel/transform-runtime"
   ],
   "presets": [
     "@babel/preset-env",

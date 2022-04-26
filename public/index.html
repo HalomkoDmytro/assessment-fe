@@ -7,11 +7,14 @@
       name="description"
       content="Web site for take assessment"
     />
-    <title>Assessment</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
     <link rel="stylesheet" href="https://bootswatch.com/5/litera/bootstrap.min.css">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div hidden>
+      Build at: <%= htmlWebpackPlugin.options.buildTime %>
+    </div>
     <div id="root"></div>
   </body>
 </html>
