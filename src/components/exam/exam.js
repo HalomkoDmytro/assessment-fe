@@ -76,6 +76,7 @@ const ExamView = ({exam}) => {
                     <span className="term">year</span>
                     <span>{year}</span>
                 </li>
+                {tagsView}
             </ul>
         </div>
     </React.Fragment>
@@ -91,6 +92,15 @@ const DescriptionView = ({description}) => {
 }
 
 const TagsView = ({tags}) => {
-    return <React.Fragment>
-    </React.Fragment>;
+    const resultTags = [];
+
+    if(tags) {
+        tags.forEach(tag => {
+            resultTags.push(<button key={tag.tag + "tag"} className="btn btn-secondary btn-tag">{tag.tag}</button>);
+        })
+    }
+
+    return <li>
+        <span>{resultTags}</span>
+    </li>;
 }

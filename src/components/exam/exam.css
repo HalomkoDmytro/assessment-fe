@@ -22,3 +22,7 @@
 .exam .list-group-item .term {
     margin-right: .5rem;
 }
+
+.btn-tag {
+    width: fit-content;
+}
