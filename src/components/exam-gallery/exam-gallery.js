@@ -62,7 +62,7 @@ export default class ExamGallery extends Component {
     examMenuItem(exam) {
         return <tr key={exam.id}>
             <td>
-                <Link to={"/exam/" + exam.id}>
+                <Link to={`/exam/${exam.id}`}>
                 {exam.title}
                 /
                 {exam.year}
