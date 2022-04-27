@@ -3,6 +3,7 @@ import ExamService from "../../service/exam-service";
 import './exam.css'
 import Spinner from "../spinner";
 import ErrorIndicator from "../error-indicator";
+import {Link} from "react-router-dom";
 
 export default class Exam extends Component {
 
@@ -66,18 +67,29 @@ const ExamView = ({exam}) => {
     const tagsView = <TagsView tags={tags}/>
 
     return <React.Fragment>
-        <img className="exam-image"
-             src={`${img}`} alt={'assessment img'}/>
         <div>
-            <h4>{title}</h4>
-            <ul className="list-group list-group-flush">
-                {descriptionView}
-                <li className="list-group-item">
-                    <span className="term">year</span>
-                    <span>{year}</span>
-                </li>
-                {tagsView}
-            </ul>
+            <div className="inner">
+                <img className="exam-image"
+                     src={`${img}`} alt={'assessment img'}/>
+                <div>
+                    <h4>{title}</h4>
+                    <ul className="list-group list-group-flush">
+                        {descriptionView}
+                        <li className="list-group-item">
+                            <span className="term">language</span>
+                            <span>{language}</span>
+                        </li>
+                        <li className="list-group-item">
+                            <span className="term">year</span>
+                            <span>{year}</span>
+                        </li>
+                        {tagsView}
+                    </ul>
+                </div>
+            </div>
+            <div className="question-list">
+                <button className="btn btn-primary">Random question</button>
+            </div>
         </div>
     </React.Fragment>
 };
@@ -94,13 +106,16 @@ const DescriptionView = ({description}) => {
 const TagsView = ({tags}) => {
     const resultTags = [];
 
-    if(tags) {
+    if (tags) {
         tags.forEach(tag => {
             resultTags.push(<button key={tag.tag + "tag"} className="btn btn-secondary btn-tag">{tag.tag}</button>);
         })
     }
 
-    return <li>
-        <span>{resultTags}</span>
-    </li>;
+    return <React.Fragment>
+        <li className="list-group-item">
+            <span className="term">Tags</span>
+            <span>{resultTags}</span>
+        </li>
+    </React.Fragment>
 }

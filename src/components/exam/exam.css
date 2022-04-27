@@ -26,3 +26,11 @@
 .btn-tag {
     width: fit-content;
 }
+
+.inner {
+    display: table;
+}
+
+.question-list {
+    padding-top: 10px;
+}
