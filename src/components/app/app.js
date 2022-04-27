@@ -15,8 +15,16 @@ const App = () => {
                 <Header/>
                 {/*<Exam/>*/}
                 <Routes>
-                    <Route path="/" element={<ExamGallery/>}/>
-                    <Route path="/exam" element={<Exam />}/>
+                    <Route path="/" exact element={<ExamGallery/>}/>
+                    <Route path="/exam/:id" element={({match}) => {
+                        const {id} = match.params;
+                        return <Exam examId={id}/>;
+                    }}/>
+                    <Route path="/exam/:id/:questionId" element={({match}) => {
+                        const {id, questionId} = match.params;
+                        return <React.Fragment/>;
+                    }
+                    }/>
                 </Routes>
             </BrowserRouter>
         </div>
