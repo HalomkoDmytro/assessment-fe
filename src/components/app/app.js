@@ -5,12 +5,8 @@ import Header from '../header';
 import './app.css';
 import Exam from "../exam";
 import ExamGallery from "../exam-gallery";
-import {
-    BrowserRouter,
-    // Routes,
-    Route,
-    Link
-} from "react-router-dom";
+import {BrowserRouter, Route} from "react-router-dom";
+import Question from "../question";
 
 
 const App = () => {
@@ -19,23 +15,17 @@ const App = () => {
             <BrowserRouter>
                 <div>
                     <Header/>
-                    {/*<Exam/>*/}
-                    {/*<Routes>*/}
-
                     <Route path="/" exact component={ExamGallery}/>
-                    {/*<Route path="/" exact element={<ExamGallery/>}/>*/}
-                    <Route path="/exam/:id" component={({match}) => {
-                        console.log("match", match)
+                    <Route path="/exam/:id" exact component={({match}) => {
                         const {id} = match.params;
                         return <Exam examId={id}/>;
                     }
                     }/>
-                    <Route path="/exam/:id/:questionId" element={({match}) => {
-                        const {id, questionId} = match.params;
-                        return <React.Fragment/>;
+                    <Route path="/exam/:id/random" component={({match}) => {
+                        const {id} = match.params;
+                        return <Question examId={id}/>;
                     }
                     }/>
-                    {/*</Routes>*/}
                 </div>
             </BrowserRouter>
         </div>

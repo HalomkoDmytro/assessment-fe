@@ -7,7 +7,7 @@ export default class ExamService {
         if (!res.ok) {
             throw new Error(`Could not fetch ${url}, received ${res.status}`)
         }
-        return await res.json();
+        return res.json();
     }
 
     async postResource(url, data) {

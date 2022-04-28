@@ -88,7 +88,7 @@ const ExamView = ({exam}) => {
                 </div>
             </div>
             <div className="question-list">
-                <button className="btn btn-primary">Random question</button>
+                <Link to={`/exam/${exam.id}/random`}><button className="btn btn-primary">Random question</button></Link>
             </div>
         </div>
     </React.Fragment>
