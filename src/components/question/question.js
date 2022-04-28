@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import QuestionService from "../../service/question-service";
 
 import './question.css';
@@ -48,20 +48,61 @@ export default class Question extends Component {
         })
     }
 
-    getAnswers(question) {
-        return null;
+    getAnswerOptions(answers, multipleCorrect) {
+
+        const answerArr = [];
+
+
+        if (answers && answers.length > 0) {
+            if (multipleCorrect) {
+                answers.forEach(ans => {
+                    answerArr.push(
+                        <li className="list-group-item" key={ans.id}>
+                            <div className="form-check">
+                                <input type="checkbox" className="form-check-input"/>
+                                <label className="form-check-label">
+                                    {ans.text}
+                                </label>
+                            </div>
+                        </li>)
+                })
+                return <ul className="list-group list-group-flush">
+                    {answerArr}
+                </ul>
+            } else {
+                answers.forEach(ans => {
+                    answerArr.push(
+                        <div key={'k'+ ans.id} className="form-check">
+                            <label className="form-check-label">
+                                <input type="radio"
+                                       className="form-check-input"
+                                       name="ansOptRadio"
+                                       id={ans.id}/>
+                                {ans.text}
+                            </label>
+                        </div>
+                    )
+                })
+                return <fieldset>
+                    {answerArr}
+                </fieldset>
+            }
+        }
     }
 
     getQuestionView = (question) => {
-        let answers = this.getAnswers(question);
+        const {text, img, multipleCorrect, explanationAnswer, answers} = question;
+        const {showExplanationAnswer} = this.state;
+        const answerOptions = this.getAnswerOptions(answers, multipleCorrect);
 
         return <React.Fragment>
             <div>
                 {question.text}
             </div>
             <div>
-                {answers}
+                {answerOptions}
             </div>
+            {showExplanationAnswer && <div>{explanationAnswer}</div>}
         </React.Fragment>
     }
 
@@ -79,6 +120,8 @@ export default class Question extends Component {
                 {errorMessage}
                 {spinner}
                 {content}
+                <button type="button" className="btn btn-success">Check answer</button>
+                <button type="button" className="btn btn-danger">Next</button>
             </React.Fragment>
         )
     }
