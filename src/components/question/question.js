@@ -20,7 +20,6 @@ export default class Question extends Component {
     }
 
     getQuestion() {
-        console.log("get question");
         const {questionId, examId} = this.props;
         this.questionRequest(questionId, examId)
             .then(this.onQuestionUpdate)
@@ -43,13 +42,11 @@ export default class Question extends Component {
     }
 
     onQuestionUpdate = (question) => {
-        console.log(question);
         this.setState({
             question,
             loading: false
         })
     }
-
 
     getAnswers(question) {
         return null;
@@ -70,18 +67,18 @@ export default class Question extends Component {
 
     render() {
         const {question, loading, error} = this.state;
-        const hasData = !(loading || error);
+        const hasData = !(loading || error) && question;
 
         const errorMessage = error ? <ErrorIndicator/> : null;
         const spinner = loading ? <Spinner/> : null;
-        const content = hasData ? <QuestionView quesiton={question}/> : null;
+        const content = hasData ? this.getQuestionView(question) : null;
 
 
         return (
             <React.Fragment>
                 {errorMessage}
                 {spinner}
-                {QuestionView}
+                {content}
             </React.Fragment>
         )
     }

@@ -12,13 +12,11 @@ export default class QuestionService {
 
     async getQuestion(id) {
         return this.getResource(`/${id}`)
-            .then((body) => console.log("res: ", body))
             .catch((e) => console.error(e));
     }
 
     async getRandomQuestionByEamId(id) {
         return this.getResource(`/exams/${id}/random`)
-            .then((body) => console.log("res: ", body))
             .catch((e) => console.error(e));
     }
 
