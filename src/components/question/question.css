@@ -1,0 +1,45 @@
+.answer {
+    border: 0;
+    border-radius: 0.5em;
+}
+
+.question {
+    border: 1px solid #000;
+    border-radius: 0.5em;
+    padding: 1em;
+}
+
+.wrong {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d9534f
+}
+
+.correct {
+    color: #fff;
+    background-color: #02b875;
+    border-color: #02b875
+}
+
+.basic {
+    color: #000;
+    background-color: #fff;
+}
+
+.should-correct {
+    color: #fff;
+    background-color: #73bd95;
+    border-color: #73bd95;
+}
+
+.explanation {
+    color: #fff;
+    border: 1px solid transparent;
+    background-color: #adb5bd;
+    border-radius: 1.078em;
+    padding: 1em;
+}
+
+.m-top {
+    margin-top: 1em;
+}

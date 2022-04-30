@@ -4,10 +4,12 @@ import QuestionService from "../../service/question-service";
 import './question.css';
 import ErrorIndicator from "../error-indicator";
 import Spinner from "../spinner";
+import AnswerService from "../../service/answer-service";
 
 export default class Question extends Component {
 
     questionService = new QuestionService();
+    answerService = new AnswerService();
 
     state = {
         question: {},
@@ -36,7 +38,7 @@ export default class Question extends Component {
 
     questionRequest(questionId, examId) {
         if (questionId) {
-            return this.questionService.getQuestion(this.props.questionId);
+            return this.questionService.getQuestion(questionId);
         } else {
             return this.questionService.getRandomQuestionByEamId(examId);
         }
@@ -45,8 +47,27 @@ export default class Question extends Component {
     onQuestionUpdate = (question) => {
         this.setState({
             question,
-            loading: false
+            loading: false,
+            explanationAnswer: null,
+            correct: null,
+            isOptionsWasCorrect: false
         })
+    }
+
+    getHighlightColor = (answerId, isSelected, correct) => {
+        if (correct && correct.length > 0) {
+            if (isSelected) {
+                if (correct.includes(answerId)) {
+                    return "correct";
+                } else {
+                    return "wrong";
+                }
+            } else if (correct.includes(answerId)) {
+                return "should-correct";
+            }
+        }
+
+        return "basic";
     }
 
     getAnswerOptions(answers, multipleCorrect) {
@@ -54,14 +75,21 @@ export default class Question extends Component {
         const answerOptionsArr = [];
 
         if (answers && answers.length > 0) {
+
+            const {correct, selectedAnswer} = this.state;
+            const isChooseAvailable = (correct && correct.length > 0);
+
             if (multipleCorrect) {
                 answers.forEach(ans => {
+                    const color = this.getHighlightColor(ans.id, selectedAnswer.includes(ans.id), correct);
                     answerOptionsArr.push(
                         <li className="list-group-item" key={ans.id}>
-                            <div className="form-check">
+                            <div className={"form-check answer " + color}>
                                 <input type="checkbox"
                                        className="form-check-input"
-                                       onChange={() => this.handleMultChoice(ans.id)}/>
+                                       onChange={() => this.handleMultChoice(ans.id)}
+                                       disabled={isChooseAvailable}
+                                />
                                 <label className="form-check-label">
                                     {ans.text}
                                 </label>
@@ -73,14 +101,17 @@ export default class Question extends Component {
                 </ul>
             } else {
                 answers.forEach(ans => {
+                    const color = this.getHighlightColor(ans.id, selectedAnswer.includes(ans.id), correct);
                     answerOptionsArr.push(
-                        <div key={'k' + ans.id} className="form-check">
+                        <div key={'k' + ans.id} className={"form-check answer " + color}>
                             <label className="form-check-label">
                                 <input type="radio"
                                        className="form-check-input"
                                        name="ansOptRadio"
                                        id={ans.id}
-                                       onChange={() => this.handleSingleChoice(ans.id)}/>
+                                       onChange={() => this.handleSingleChoice(ans.id)}
+                                       disabled={isChooseAvailable}
+                                />
                                 {ans.text}
                             </label>
                         </div>
@@ -108,23 +139,39 @@ export default class Question extends Component {
     }
 
     getQuestionView = (question) => {
-        const {text, img, multipleCorrect, explanationAnswer, answers} = question;
-        const {showExplanationAnswer} = this.state;
+        const {text, img, multipleCorrect, answers} = question;
+        const {explanationAnswer} = this.state;
         const answerOptions = this.getAnswerOptions(answers, multipleCorrect);
 
         return <React.Fragment>
-            <div>
+            <div className="question">
                 {question.text}
             </div>
-            <div>
+            <div className="m-top">
                 {answerOptions}
             </div>
-            {showExplanationAnswer && <div>{explanationAnswer}</div>}
+            {explanationAnswer && <div className="m-top">
+                <div className="explanation">{explanationAnswer}</div>
+            </div>}
         </React.Fragment>
     }
 
     checkAnswerBtnHandler = () => {
-        console.log("answers: ", this.state.selectedAnswer);
+        const {selectedAnswer, isOptionsWasCorrect} = this.state;
+        if (selectedAnswer && selectedAnswer.length > 0 && !isOptionsWasCorrect) {
+            this.answerService.checkAnswer({
+                questionId: this.state.question.id,
+                answerList: selectedAnswer
+            }).then(this.onCheckAnswer);
+        }
+    }
+
+    onCheckAnswer = (checkAnswerResponse) => {
+        this.setState({
+            explanationAnswer: checkAnswerResponse.description,
+            correct: checkAnswerResponse.correctAnswersId,
+            isOptionsWasCorrect: checkAnswerResponse.isCorrect
+        });
     }
 
     render() {
@@ -135,15 +182,18 @@ export default class Question extends Component {
         const spinner = loading ? <Spinner/> : null;
         const content = hasData ? this.getQuestionView(question) : null;
 
-
         return (
             <React.Fragment>
                 {errorMessage}
                 {spinner}
                 {content}
-                <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>Check answer
-                </button>
-                <button type="button" className="btn btn-danger" onClick={this.getQuestion}>Next</button>
+
+                <div className="m-top">
+                    <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>
+                        Check answer
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={this.getQuestion}>Next</button>
+                </div>
             </React.Fragment>
         )
     }
