@@ -7,26 +7,36 @@ import Exam from "../exam";
 import ExamGallery from "../exam-gallery";
 import {BrowserRouter, Route} from "react-router-dom";
 import Question from "../question";
+import About from "../about";
 
 
 const App = () => {
     return (
-        <div className="assessment-app">
+        <div>
             <BrowserRouter>
-                <div>
+                <React.Fragment>
                     <Header/>
-                    <Route path="/" exact component={ExamGallery}/>
-                    <Route path="/exam/:id" exact component={({match}) => {
-                        const {id} = match.params;
-                        return <Exam examId={id}/>;
-                    }
-                    }/>
-                    <Route path="/exam/:id/random" component={({match}) => {
-                        const {id} = match.params;
-                        return <Question examId={id}/>;
-                    }
-                    }/>
-                </div>
+
+                    <div className="assessment-app">
+                        <Route path="/" exact component={ExamGallery}/>
+
+                        <Route path="/about" exact component={About}/>
+
+                        <Route path="/exam/:id" exact component={
+                            ({match}) => {
+                                const {id} = match.params;
+                                return <Exam examId={id}/>;
+                            }
+                        }/>
+
+                        <Route path="/exam/:id/random" component={
+                            ({match}) => {
+                                const {id} = match.params;
+                                return <Question examId={id}/>;
+                            }
+                        }/>
+                    </div>
+                </React.Fragment>
             </BrowserRouter>
         </div>
     );

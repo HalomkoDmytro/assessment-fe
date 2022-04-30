@@ -50,7 +50,7 @@ export default class Exam extends Component {
         const content = hasData ? <ExamView exam={exam}/> : null;
 
         return (
-            <div className="exam jumbotron rounded">
+            <div className="exam jumbotron rounded m-top">
                 {errorMessage}
                 {spinner}
                 {content}

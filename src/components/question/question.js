@@ -140,8 +140,9 @@ export default class Question extends Component {
         const answerOptions = this.getAnswerOptions(answers, multipleCorrect);
 
         return <React.Fragment>
-            <div className="question">
-                {question.text}
+            {img && <img src={img} alt="oops, problem with load image"/>}
+            <div className="question m-top">
+                {text}
             </div>
             <div className="m-top">
                 {answerOptions}
