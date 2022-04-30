@@ -11,7 +11,8 @@ export default class Question extends Component {
 
     state = {
         question: {},
-        loading: true
+        loading: true,
+        selectedAnswer: []
     }
 
     constructor(props) {
@@ -19,7 +20,7 @@ export default class Question extends Component {
         this.getQuestion();
     }
 
-    getQuestion() {
+    getQuestion = () => {
         const {questionId, examId} = this.props;
         this.questionRequest(questionId, examId)
             .then(this.onQuestionUpdate)
@@ -50,16 +51,17 @@ export default class Question extends Component {
 
     getAnswerOptions(answers, multipleCorrect) {
 
-        const answerArr = [];
-
+        const answerOptionsArr = [];
 
         if (answers && answers.length > 0) {
             if (multipleCorrect) {
                 answers.forEach(ans => {
-                    answerArr.push(
+                    answerOptionsArr.push(
                         <li className="list-group-item" key={ans.id}>
                             <div className="form-check">
-                                <input type="checkbox" className="form-check-input"/>
+                                <input type="checkbox"
+                                       className="form-check-input"
+                                       onChange={() => this.handleMultChoice(ans.id)}/>
                                 <label className="form-check-label">
                                     {ans.text}
                                 </label>
@@ -67,27 +69,42 @@ export default class Question extends Component {
                         </li>)
                 })
                 return <ul className="list-group list-group-flush">
-                    {answerArr}
+                    {answerOptionsArr}
                 </ul>
             } else {
                 answers.forEach(ans => {
-                    answerArr.push(
-                        <div key={'k'+ ans.id} className="form-check">
+                    answerOptionsArr.push(
+                        <div key={'k' + ans.id} className="form-check">
                             <label className="form-check-label">
                                 <input type="radio"
                                        className="form-check-input"
                                        name="ansOptRadio"
-                                       id={ans.id}/>
+                                       id={ans.id}
+                                       onChange={() => this.handleSingleChoice(ans.id)}/>
                                 {ans.text}
                             </label>
                         </div>
                     )
                 })
                 return <fieldset>
-                    {answerArr}
+                    {answerOptionsArr}
                 </fieldset>
             }
         }
+    }
+
+    handleSingleChoice = (ansId) => {
+        this.setState({selectedAnswer: [ansId]})
+    }
+
+    handleMultChoice = (ansId) => {
+        let selectedAnswer = this.state.selectedAnswer;
+        if (selectedAnswer.includes(ansId)) {
+            selectedAnswer.splice(selectedAnswer.indexOf(ansId), 1);
+        } else {
+            selectedAnswer.push(ansId);
+        }
+        this.setState({selectedAnswer});
     }
 
     getQuestionView = (question) => {
@@ -106,6 +123,10 @@ export default class Question extends Component {
         </React.Fragment>
     }
 
+    checkAnswerBtnHandler = () => {
+        console.log("answers: ", this.state.selectedAnswer);
+    }
+
     render() {
         const {question, loading, error} = this.state;
         const hasData = !(loading || error) && question;
@@ -120,8 +141,9 @@ export default class Question extends Component {
                 {errorMessage}
                 {spinner}
                 {content}
-                <button type="button" className="btn btn-success">Check answer</button>
-                <button type="button" className="btn btn-danger">Next</button>
+                <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>Check answer
+                </button>
+                <button type="button" className="btn btn-danger" onClick={this.getQuestion}>Next</button>
             </React.Fragment>
         )
     }
