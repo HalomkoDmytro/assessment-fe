@@ -5,6 +5,7 @@ import './question.css';
 import ErrorIndicator from "../error-indicator";
 import Spinner from "../spinner";
 import AnswerService from "../../service/answer-service";
+import Total from "./components/totals";
 
 export default class Question extends Component {
 
@@ -14,7 +15,10 @@ export default class Question extends Component {
     state = {
         question: {},
         loading: true,
-        selectedAnswer: []
+        selectedAnswer: [],
+        questionNumber: 0,
+        correctAnswers: 0,
+        wrongAnswers: 0
     }
 
     constructor(props) {
@@ -31,8 +35,7 @@ export default class Question extends Component {
 
     onError = (err) => {
         this.setState({
-            error: true,
-            loading: false
+            error: true, loading: false
         });
     };
 
@@ -46,11 +49,7 @@ export default class Question extends Component {
 
     onQuestionUpdate = (question) => {
         this.setState({
-            question,
-            loading: false,
-            explanationAnswer: null,
-            correct: null,
-            isOptionsWasCorrect: false
+            question, loading: false, explanationAnswer: null, correct: null, isOptionsWasCorrect: false
         })
     }
 
@@ -82,19 +81,18 @@ export default class Question extends Component {
             if (multipleCorrect) {
                 answers.forEach(ans => {
                     const color = this.getHighlightColor(ans.id, selectedAnswer.includes(ans.id), correct);
-                    answerOptionsArr.push(
-                        <li className="list-group-item" key={ans.id}>
-                            <div className={"form-check answer " + color}>
-                                <input type="checkbox"
-                                       className="form-check-input"
-                                       onChange={() => this.handleMultChoice(ans.id)}
-                                       disabled={isChooseAvailable}
-                                />
-                                <label className="form-check-label">
-                                    {ans.text}
-                                </label>
-                            </div>
-                        </li>)
+                    answerOptionsArr.push(<li className="list-group-item" key={ans.id}>
+                        <div className={"form-check answer " + color}>
+                            <input type="checkbox"
+                                   className="form-check-input"
+                                   onChange={() => this.handleMultChoice(ans.id)}
+                                   disabled={isChooseAvailable}
+                            />
+                            <label className="form-check-label">
+                                {ans.text}
+                            </label>
+                        </div>
+                    </li>)
                 })
                 return <ul className="list-group list-group-flush">
                     {answerOptionsArr}
@@ -102,20 +100,18 @@ export default class Question extends Component {
             } else {
                 answers.forEach(ans => {
                     const color = this.getHighlightColor(ans.id, selectedAnswer.includes(ans.id), correct);
-                    answerOptionsArr.push(
-                        <div key={'k' + ans.id} className={"form-check answer " + color}>
-                            <label className="form-check-label">
-                                <input type="radio"
-                                       className="form-check-input"
-                                       name="ansOptRadio"
-                                       id={ans.id}
-                                       onChange={() => this.handleSingleChoice(ans.id)}
-                                       disabled={isChooseAvailable}
-                                />
-                                {ans.text}
-                            </label>
-                        </div>
-                    )
+                    answerOptionsArr.push(<div key={'k' + ans.id} className={"form-check answer " + color}>
+                        <label className="form-check-label">
+                            <input type="radio"
+                                   className="form-check-input"
+                                   name="ansOptRadio"
+                                   id={ans.id}
+                                   onChange={() => this.handleSingleChoice(ans.id)}
+                                   disabled={isChooseAvailable}
+                            />
+                            {ans.text}
+                        </label>
+                    </div>)
                 })
                 return <fieldset>
                     {answerOptionsArr}
@@ -160,42 +156,49 @@ export default class Question extends Component {
         const {selectedAnswer, isOptionsWasCorrect} = this.state;
         if (selectedAnswer && selectedAnswer.length > 0 && !isOptionsWasCorrect) {
             this.answerService.checkAnswer({
-                questionId: this.state.question.id,
-                answerList: selectedAnswer
+                questionId: this.state.question.id, answerList: selectedAnswer
             }).then(this.onCheckAnswer);
         }
     }
 
     onCheckAnswer = (checkAnswerResponse) => {
-        this.setState({
-            explanationAnswer: checkAnswerResponse.description,
-            correct: checkAnswerResponse.correctAnswersId,
-            isOptionsWasCorrect: checkAnswerResponse.isCorrect
+        console.log(this.state.questionNumber)
+        this.setState((state) => {
+            return {
+                explanationAnswer: checkAnswerResponse.description,
+                correct: checkAnswerResponse.correctAnswersId,
+                isOptionsWasCorrect: checkAnswerResponse.isCorrect,
+                questionNumber: state.questionNumber + 1,
+                correctAnswers: checkAnswerResponse.isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
+                wrongAnswers: checkAnswerResponse.isCorrect ? state.wrongAnswers : state.wrongAnswers + 1
+            }
         });
     }
 
     render() {
         const {question, loading, error} = this.state;
+        const {questionNumber, correctAnswers, wrongAnswers} = this.state;
         const hasData = !(loading || error) && question;
 
         const errorMessage = error ? <ErrorIndicator/> : null;
         const spinner = loading ? <Spinner/> : null;
         const content = hasData ? this.getQuestionView(question) : null;
 
-        return (
-            <React.Fragment>
-                {errorMessage}
-                {spinner}
-                {content}
+        return (<React.Fragment>
+            {errorMessage}
+            {spinner}
+            {content}
 
-                <div className="m-top">
-                    <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>
-                        Check answer
-                    </button>
-                    <button type="button" className="btn btn-secondary" onClick={this.getQuestion}>Next</button>
-                </div>
-            </React.Fragment>
-        )
+            <div className="m-top">
+                <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>
+                    Check answer
+                </button>
+                <button type="button" className="btn btn-secondary" onClick={this.getQuestion}>Next</button>
+            </div>
+            <Total questionNumber={questionNumber}
+                   correctAnswers={correctAnswers}
+                   wrongAnswers={wrongAnswers}/>
+        </React.Fragment>)
     }
 
 }
