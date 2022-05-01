@@ -22,7 +22,7 @@ export default class Exam extends Component {
 
     getExam() {
         this.examService
-            .byId(this.props.examId || 1) // TODO: remove 1
+            .byId(this.props.examId)
             .then(this.onExamUpdate)
             .catch(this.onError);
     }
