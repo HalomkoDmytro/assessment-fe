@@ -17,7 +17,11 @@ export default class ExamGallery extends Component {
 
     constructor(props) {
         super(props);
-        this.getExams(this.getPaging());
+        if(this.state.exams && this.state.exams.length > 0) {
+            this.onExamsUpdate(this.state.exams);
+        } else {
+            this.getExams(this.getPaging());
+        }
     }
 
     getPaging(offset, limit) {
@@ -25,10 +29,6 @@ export default class ExamGallery extends Component {
             offset: offset || this.state.offset,
             limit: limit || this.state.limit
         };
-    }
-
-    scrollHandler = (e) => {
-        // TODO: implement
     }
 
     getExams(paging) {

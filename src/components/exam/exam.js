@@ -4,6 +4,7 @@ import './exam.css'
 import Spinner from "../spinner";
 import ErrorIndicator from "../error-indicator";
 import {Link} from "react-router-dom";
+import Tag from "./components/tag/tag";
 
 export default class Exam extends Component {
 
@@ -108,7 +109,7 @@ const TagsView = ({tags}) => {
 
     if (tags) {
         tags.forEach(tag => {
-            resultTags.push(<button key={tag.tag + "tag"} className="btn btn-secondary btn-tag">{tag.tag}</button>);
+            resultTags.push(<Tag tag={tag.tag}/>);
         })
     }
 
