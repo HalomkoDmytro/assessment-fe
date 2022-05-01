@@ -10,7 +10,7 @@ export default class Tag extends Component {
     render() {
         let tag = this.props.tag;
 
-        return <button key={tag + "_tag"} className="btn btn-warning btn-tag">
+        return <button className="btn btn-warning btn-tag">
             {tag}
         </button>
     }
