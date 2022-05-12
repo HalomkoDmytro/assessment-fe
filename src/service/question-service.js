@@ -15,8 +15,13 @@ export default class QuestionService {
             .catch((e) => console.error(e));
     }
 
-    async getRandomQuestionByEamId(id) {
+    async getRandomQuestionByExamId(id) {
         return this.getResource(`/exams/${id}/random`)
+            .catch((e) => console.error(e));
+    }
+
+    async getNextQuestion(id) {
+        return this.getResource(`/next/${id}`)
             .catch((e) => console.error(e));
     }
 

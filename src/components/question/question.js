@@ -43,8 +43,14 @@ export default class Question extends Component {
         if (questionId) {
             return this.questionService.getQuestion(questionId);
         } else {
-            return this.questionService.getRandomQuestionByEamId(examId);
+            return this.questionService.getRandomQuestionByExamId(examId);
         }
+    }
+
+    getNextQuestion = (questionId) => {
+        this.questionService.getNextQuestion(questionId)
+            .then(this.onQuestionUpdate)
+            .catch(this.onError);
     }
 
     onQuestionUpdate = (question) => {
@@ -194,7 +200,8 @@ export default class Question extends Component {
                 <button type="button" className="btn btn-success" onClick={this.checkAnswerBtnHandler}>
                     Check answer
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={this.getQuestion}>Next</button>
+                <button type="button" className="btn btn-secondary" onClick={() => this.getNextQuestion(this.state.question.id)}>Next</button>
+                <button type="button" className="btn btn-secondary" onClick={this.getQuestion}>Next Random</button>
             </div>
             <Total questionNumber={questionNumber}
                    correctAnswers={correctAnswers}
