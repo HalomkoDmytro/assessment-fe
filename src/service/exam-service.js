@@ -24,8 +24,8 @@ export default class ExamService {
         return await res.json();
     }
 
-    async getAll(paging = {offset: 0, limit: 10}) {
-        return this.postResource(`/all`, paging);
+    async getAll() {
+        return this.postResource(`/all`);
     }
 
     async byTag(tag) {

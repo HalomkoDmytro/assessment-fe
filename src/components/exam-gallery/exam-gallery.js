@@ -10,9 +10,7 @@ export default class ExamGallery extends Component {
 
     state = {
         exams: [],
-        loading: true,
-        offset: 0,
-        limit: 10
+        loading: true
     }
 
     constructor(props) {
@@ -20,20 +18,13 @@ export default class ExamGallery extends Component {
         if(this.state.exams && this.state.exams.length > 0) {
             this.onExamsUpdate(this.state.exams);
         } else {
-            this.getExams(this.getPaging());
+            this.getExams();
         }
     }
 
-    getPaging(offset, limit) {
-        return {
-            offset: offset || this.state.offset,
-            limit: limit || this.state.limit
-        };
-    }
-
-    getExams(paging) {
+    getExams() {
         this.examService
-            .getAll(paging)
+            .getAll()
             .then(this.onExamsUpdate);
     }
 

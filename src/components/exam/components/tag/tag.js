@@ -10,9 +10,11 @@ export default class Tag extends Component {
     render() {
         let tag = this.props.tag;
 
-        return <button className="btn btn-warning btn-tag">
-            {tag}
-        </button>
+        return <React.Fragment>
+            {/*<button className="btn btn-warning btn-tag">*/}
+                {tag}/
+            {/*</button>*/}
+        </React.Fragment>
     }
 }
 
